@@ -41,6 +41,9 @@ export async function proxy(request: NextRequest) {
   const isAuthRoute = path.startsWith("/auth/");
   const isLogin = path === "/login";
 
+  // Halaman publik, bisa dibuka tanpa login (dibutuhkan Google OAuth consent screen).
+  if (path === "/privasi") return response;
+
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
 

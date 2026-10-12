@@ -38,7 +38,10 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         </p>
       </div>
       <p className="mt-6 text-center text-xs text-slate-500">
-        Web ini hanya membantu penjadwalan. Logbook tetap diisi di Canva.
+        Web ini hanya membantu penjadwalan. Logbook tetap diisi di Canva.{" "}
+        <a href="/privasi" className="underline underline-offset-2">
+          Kebijakan privasi
+        </a>
       </p>
     </main>
   );
