@@ -100,3 +100,8 @@ export function formatCountdown(target: Date, now: Date = new Date()): string {
   if (hours > 0) return `${hours} jam ${mins} menit lagi`;
   return `${mins} menit lagi`;
 }
+
+/** Waktu saat ini (ms). Dipisah agar komponen server yang dirender per request bisa membacanya. */
+export function nowMs(): number {
+  return Date.now();
+}
