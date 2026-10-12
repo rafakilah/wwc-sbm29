@@ -222,7 +222,7 @@ Mencabut admin: `update public.profiles_private set is_admin = false where nim =
 
 1. Push repo ke GitHub, lalu di <https://vercel.com/new> import repo ini (framework terdeteksi Next.js).
 2. Isi Environment Variables (Production, dan Preview jika perlu): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `ALLOWED_EMAIL_DOMAINS` (boleh kosong).
-3. Deploy. `vercel.json` sudah mengatur `"regions": ["sin1"]` supaya function berjalan di Singapore, dekat dengan database Supabase.
+3. Deploy. Kalau project sudah terhubung ke Git tapi belum pernah build, push satu commit ke production branch atau buka Deployments → Create Deployment. `vercel.json` sudah mengatur `"regions": ["sin1"]` supaya function berjalan di Singapore, dekat dengan database Supabase.
 4. Setelah dapat domain, perbarui **Site URL** dan **Redirect URLs** di Supabase, serta **Authorized JavaScript origins** di Google Cloud (bagian 2 dan 3).
 5. Coba login dengan akun Google yang bukan test user untuk memastikan OAuth consent screen sudah "In production".
 
