@@ -9,7 +9,7 @@ export function AppNav({ isAdmin }: { isAdmin: boolean }) {
   const items = [
     { href: "/dashboard", label: "Dashboard" },
     { href: "/sessions", label: "Cari sesi" },
-    { href: "/partners", label: "Partner" },
+    { href: "/partners", label: "Progress" },
     { href: "/profile", label: "Profil" },
     ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []),
   ];

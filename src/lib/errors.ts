@@ -26,7 +26,7 @@ const MESSAGES: Record<string, string> = {
   SESSION_NOT_STARTED: "Sesi belum dimulai. Tandai selesai setelah waktu mulai, ya.",
   SESSION_FULL: "Sesi ini sudah penuh.",
   ALREADY_MEMBER: "Kamu sudah tergabung di sesi ini.",
-  DUPLICATE_PARTNER: "Ada anggota sesi ini yang sudah pernah jadi partner wawancaramu.",
+  DUPLICATE_PARTNER: "Ada anggota sesi ini yang sudah pernah wawancara denganmu (lewat sesi atau catatan manual).",
   NOT_MEMBER: "Kamu bukan anggota sesi ini.",
   HOST_CANNOT_LEAVE: "Host tidak bisa keluar. Batalkan sesi kalau tidak jadi.",
   NOT_HOST: "Hanya host yang bisa melakukan ini.",
@@ -35,6 +35,11 @@ const MESSAGES: Record<string, string> = {
   NOT_ADMIN: "Halaman ini khusus admin.",
   USER_NOT_FOUND: "User tidak ditemukan.",
   CANNOT_RESET_ADMIN: "Profil admin tidak bisa direset dari sini.",
+  SELF_NIM: "Itu NIM-mu sendiri. Masukkan NIM orang yang kamu wawancarai.",
+  INVALID_DATE: "Tanggal wawancara belum diisi dengan benar.",
+  MANUAL_IN_FUTURE: "Tanggal wawancara tidak boleh di masa depan.",
+  DUPLICATE_RECORD: "NIM ini sudah tercatat di progress wawancaramu (dari sesi atau catatan manual).",
+  RECORD_NOT_FOUND: "Catatan tidak ditemukan. Mungkin sudah dihapus.",
   UNKNOWN: "Ada yang salah. Coba lagi sebentar lagi.",
 };
 

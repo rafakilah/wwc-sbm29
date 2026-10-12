@@ -2,12 +2,17 @@
 export const IMPORTANT_LINKS = [
   {
     label: "SOP Wawancara Angkatan",
-    description: "Google Docs",
-    href: "https://docs.google.com/document/d/1IilXBU5wvwC-T0Uf8EDdjgUBpTymxf5rprELA060i0Y/edit?tab=t.0",
+    description: "Google Drive",
+    href: "https://drive.google.com/file/d/1fQGUN-3NJ8oHYmSaAmGZwW4EhXMGK7TS/view?usp=sharing",
   },
   {
     label: "FAQ Penugasan",
     description: "Google Sheets",
     href: "https://docs.google.com/spreadsheets/d/1MWroYFIAucEmTs-sH8_TLdhZZhZRqWuAvL151eh-S5I/edit?gid=0#gid=0",
+  },
+  {
+    label: "Template Logbook",
+    description: "Canva",
+    href: "https://www.canva.com/design/DAHXn7zkx8M/Ss47w4Q_rru2hF8711f8Ig/edit",
   },
 ] as const;
