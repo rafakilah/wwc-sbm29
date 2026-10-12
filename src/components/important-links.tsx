@@ -2,7 +2,7 @@ import { IMPORTANT_LINKS } from "@/lib/links";
 
 export function ImportantLinksList() {
   return (
-    <ul className="grid gap-2 sm:grid-cols-2">
+    <ul className="grid gap-2 sm:grid-cols-3">
       {IMPORTANT_LINKS.map((link) => (
         <li key={link.href}>
           <a

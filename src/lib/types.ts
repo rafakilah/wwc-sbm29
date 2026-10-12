@@ -45,17 +45,20 @@ export type Progress = {
   reguler_done: number;
 };
 
-export type PartnerRow = {
-  partner_id: string;
+/** Satu catatan wawancara: dari sesi aktif atau dicatat manual. */
+export type InterviewRecord = {
+  source: "session" | "manual";
+  /** id sesi (source=session) atau id catatan manual (source=manual). */
+  record_id: string;
+  partner_id: string | null;
   full_name: string;
-  nickname: string;
+  nickname: string | null;
   nim: string;
   track: Track;
-  line_id: string;
-  session_id: string;
-  starts_at: string;
-  ends_at: string;
-  mode: SessionMode;
-  session_status: SessionStatus;
+  line_id: string | null;
+  happened_at: string;
+  mode: SessionMode | null;
+  status: SessionStatus;
   voice_memo_url: string | null;
+  notes: string | null;
 };

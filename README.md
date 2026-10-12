@@ -267,3 +267,4 @@ CI GitHub Actions (`.github/workflows/ci.yml`) menjalankan semuanya, termasuk te
 - **Reset profil oleh admin** menghapus profil beserta sesi yang di-host user itu (anggota lain kehilangan sesi tersebut). Ini kasus langka untuk NIM yang diklaim orang lain, dan UI meminta konfirmasi.
 - Email Google ditampilkan di /profile dan export CSV admin; tidak disimpan di tabel profil.
 - Tidak ada dark mode; UI dioptimalkan untuk layar HP dulu.
+- **Wawancara manual** (halaman Progress → "Tambah wawancara manual"): untuk wawancara yang dilakukan sebelum website ini ada. Catatan disimpan di tabel `manual_interviews`, jalur diturunkan dari NIM, dihitung **Selesai** di progres pemiliknya saja (tidak otomatis menambah progres orang yang diwawancarai), dan dicocokkan lewat NIM untuk mencegah duplikat dari dua arah. View `interview_records` kini menjadi definisi terpusat "siapa sudah/akan diwawancarai siapa" (partner sesi aktif + catatan manual).
