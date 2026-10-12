@@ -17,7 +17,7 @@ begin
     return public._result(false, 'NOT_AUTHENTICATED');
   end if;
 
-  select * into v_session from public.sessions where id = p_session_id for no key update;
+  select * from public.sessions where id = p_session_id for no key update into v_session;
   if not found then
     return public._result(false, 'SESSION_NOT_FOUND');
   end if;
@@ -56,7 +56,7 @@ begin
     return public._result(false, 'NOT_AUTHENTICATED');
   end if;
 
-  select * into v_session from public.sessions where id = p_session_id for no key update;
+  select * from public.sessions where id = p_session_id for no key update into v_session;
   if not found then
     return public._result(false, 'SESSION_NOT_FOUND');
   end if;
@@ -91,7 +91,7 @@ begin
     return public._result(false, 'NOT_AUTHENTICATED');
   end if;
 
-  select * into v_session from public.sessions where id = p_session_id for no key update;
+  select * from public.sessions where id = p_session_id for no key update into v_session;
   if not found then
     return public._result(false, 'SESSION_NOT_FOUND');
   end if;
@@ -108,7 +108,7 @@ begin
     return public._result(false, 'INVALID_URL');
   end if;
 
-  select count(*) into v_count from public.session_members where session_id = p_session_id;
+  v_count := (select count(*) from public.session_members where session_id = p_session_id);
   if v_count < 2 then
     return public._result(false, 'NO_PARTNERS');
   end if;
@@ -156,7 +156,7 @@ begin
   if not public.is_admin() then
     return public._result(false, 'NOT_ADMIN');
   end if;
-  select * into v_target from public.profiles_private where id = p_user_id;
+  select * from public.profiles_private where id = p_user_id into v_target;
   if not found then
     return public._result(false, 'USER_NOT_FOUND');
   end if;
