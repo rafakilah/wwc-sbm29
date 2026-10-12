@@ -30,6 +30,8 @@ export class TestDb {
     readonly url: string,
   ) {
     this.pool = new Pool({ connectionString: url, max: 40 });
+    // Koneksi idle yang diputus saat database sementara di-drop tidak perlu dianggap error.
+    this.pool.on("error", () => {});
   }
 
   static async create(): Promise<TestDb> {

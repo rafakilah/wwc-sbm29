@@ -18,7 +18,7 @@ export function OnboardingForm({ defaultFullName }: { defaultFullName: string })
       <Field label="Nama panggilan" htmlFor="nickname" error={fe.nickname} hint="Ini yang terlihat di daftar sesi.">
         <input id="nickname" name="nickname" required maxLength={40} autoComplete="nickname" className={inputClass} />
       </Field>
-      <NimInput serverError={fe.nim} />
+      <NimInput serverError={fe.nim} submission={state} />
       <Field label="ID LINE" htmlFor="line_id" error={fe.line_id} hint="Supaya teman satu sesi bisa menghubungimu.">
         <input id="line_id" name="line_id" required maxLength={50} autoComplete="off" autoCapitalize="none" className={inputClass} />
       </Field>

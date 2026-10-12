@@ -16,6 +16,7 @@ export function SessionActionButton({
   variant = "primary",
   confirmText,
   className,
+  successHref,
 }: {
   sessionId: string;
   action: keyof typeof ACTIONS;
@@ -24,6 +25,8 @@ export function SessionActionButton({
   variant?: ButtonVariant;
   confirmText?: string;
   className?: string;
+  /** Jika diisi, pindah ke halaman ini setelah berhasil. */
+  successHref?: string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -33,6 +36,10 @@ export function SessionActionButton({
     if (confirmText && !window.confirm(confirmText)) return;
     startTransition(async () => {
       const res = await ACTIONS[action](sessionId);
+      if (res.ok && successHref) {
+        router.push(successHref);
+        return;
+      }
       setResult(res);
       router.refresh();
     });

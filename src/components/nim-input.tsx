@@ -4,14 +4,24 @@ import { useState } from "react";
 import { NIM_LENGTH, trackFromNim } from "@/lib/nim";
 import { TrackBadge, inputClass } from "./ui";
 
-/** Input NIM dengan validasi real-time dan badge jalur otomatis. */
-export function NimInput({ serverError }: { serverError?: string }) {
+/**
+ * Input NIM dengan validasi real-time dan badge jalur otomatis.
+ * `submission` berubah setiap kali form dikirim; error dari server hanya
+ * ditampilkan selama NIM belum diubah sejak pengiriman itu.
+ */
+export function NimInput({ serverError, submission }: { serverError?: string; submission?: unknown }) {
   const [value, setValue] = useState("");
   const [touched, setTouched] = useState(false);
+  const [seenSubmission, setSeenSubmission] = useState(submission);
+  const [submittedValue, setSubmittedValue] = useState(value);
+  if (submission !== seenSubmission) {
+    setSeenSubmission(submission);
+    setSubmittedValue(value);
+  }
   const check = trackFromNim(value);
   const localError =
     !check.ok && value.length > 0 && (touched || value.length >= NIM_LENGTH) ? check.message : null;
-  const error = localError ?? serverError ?? null;
+  const error = localError ?? (value === submittedValue ? serverError : null) ?? null;
 
   return (
     <div className="space-y-1.5">

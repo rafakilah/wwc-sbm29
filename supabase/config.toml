@@ -1,0 +1,29 @@
+# Konfigurasi Supabase CLI untuk pengembangan lokal (`supabase start`).
+# Project production diatur lewat dashboard Supabase (lihat README).
+project_id = "wwc-sbm29"
+
+[api]
+port = 54321
+schemas = ["public"]
+
+[db]
+port = 54322
+major_version = 17
+
+[db.seed]
+# Seed memakai scripts/seed.ts (npm run seed), bukan seed.sql.
+enabled = false
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+
+[auth.email]
+# Login hanya lewat Google. Email/magic link/OTP dimatikan.
+enable_signup = false
+
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+skip_nonce_check = false

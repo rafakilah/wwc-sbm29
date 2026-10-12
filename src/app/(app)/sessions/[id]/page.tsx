@@ -86,6 +86,7 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
       </Link>
 
       {query.dibuat ? <Alert tone="success">Sesi berhasil dibuat. Bagikan link halaman ini ke teman-temanmu!</Alert> : null}
+      {query.gabung && isMember ? <Alert tone="success">Kamu berhasil bergabung. Sampai ketemu di sesi!</Alert> : null}
 
       <Card className="space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-2">

@@ -171,7 +171,7 @@ function SessionListItem({ session: s }: { session: OpenSessionRow }) {
             <p className="text-sm text-slate-600">{blockerLabel(s.blocker)}</p>
           </>
         ) : (
-          <SessionActionButton sessionId={s.id} action="join" label="Gabung" pendingLabel="Bergabung…" />
+          <SessionActionButton sessionId={s.id} action="join" label="Gabung" pendingLabel="Bergabung…" successHref={`/sessions/${s.id}?gabung=1`} />
         )}
         <Link href={`/sessions/${s.id}`} className="ml-auto inline-flex min-h-11 items-center px-2 text-sm font-medium text-brand-700 underline underline-offset-4">
           Detail
