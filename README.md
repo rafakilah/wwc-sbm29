@@ -31,7 +31,7 @@ Web ini bukan pengganti logbook. Rekaman voice memo tetap dimasukkan ke logbook 
 
 ```
 supabase/
-  migrations/20261012000000_init.sql   Skema lengkap: tabel, constraint, index, view, RLS, RPC
+  migrations/                          Skema lengkap (5 file berurutan): tabel, constraint, index, view, RLS, RPC, grant
   config.toml                          Konfigurasi Supabase CLI lokal
 src/
   proxy.ts                             "Middleware" Next 16: refresh sesi, wajib login, wajib onboarding
@@ -175,9 +175,9 @@ npx supabase db push
 
 **B. SQL Editor**
 
-Buka Supabase → SQL Editor, tempel isi `supabase/migrations/20261012000000_init.sql`, lalu Run.
+Buka Supabase → SQL Editor, lalu jalankan isi setiap file di `supabase/migrations/` satu per satu, urut sesuai nama file. Cara ini tidak mencatat riwayat migration; kalau nanti pakai CLI, utamakan opsi A.
 
-Migration aman dijalankan sekali pada project kosong. Perubahan skema berikutnya ditambahkan sebagai file migration baru.
+Migration dipecah menjadi 5 file karena konektor Supabase MCP timeout untuk SQL besar dan untuk SQL yang berisi `DELETE`. Isinya sama dengan satu skema utuh. Migration aman dijalankan sekali pada project kosong. Perubahan skema berikutnya ditambahkan sebagai file migration baru.
 
 ## 6. Pengembangan lokal dan seed
 
