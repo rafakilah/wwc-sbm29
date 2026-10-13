@@ -21,6 +21,8 @@ export type OpenSessionRow = {
   member_count: number;
   members: PublicMember[];
   blocker: string | null;
+  /** Jumlah anggota yang sudah pernah wawancara denganku (tidak dihitung dobel). */
+  repeat_count: number;
 };
 
 export type MySessionRow = {

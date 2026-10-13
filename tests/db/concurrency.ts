@@ -24,7 +24,7 @@ export async function runJoinRace(db: TestDb, joiners = 30, capacity = 10) {
 /**
  * Dua transaksi di sesi berbeda yang akan membuat pasangan yang sama:
  * A gabung ke S1 (berisi B) dan B gabung ke S2 (berisi A) di waktu bersamaan.
- * Hanya satu yang boleh berhasil.
+ * Sejak pertemuan ulang diizinkan, keduanya boleh berhasil.
  */
 export async function runCrossSessionDuplicateRace(db: TestDb) {
   const nims = nimFactory();

@@ -7,6 +7,7 @@ import { deleteManualInterview } from "@/app/actions/manual";
 import { Alert, Button, EmptyState, StatusBadge, TrackBadge } from "@/components/ui";
 import type { ActionState } from "@/lib/action-result";
 import { toCsv, toTsv } from "@/lib/csv";
+import { groupByPerson, type PersonGroup } from "@/lib/interview-groups";
 import { formatDateTimeWib } from "@/lib/time";
 import type { InterviewRecord } from "@/lib/types";
 
@@ -16,25 +17,31 @@ const HEADER = [
   "NIM",
   "Jalur",
   "ID LINE",
-  "Waktu wawancara (WIB)",
   "Status",
+  "Jumlah pertemuan",
+  "Waktu wawancara (WIB)",
   "Sumber",
   "Link voice memo",
   "Catatan",
 ];
 
-function toRows(records: InterviewRecord[]) {
-  return records.map((r) => [
-    r.full_name,
-    r.nickname ?? "",
-    r.nim,
-    r.track === "IUP" ? "IUP" : "Reguler",
-    r.line_id ?? "",
-    formatDateTimeWib(r.happened_at),
-    r.status === "done" ? "Selesai" : "Terjadwal",
-    r.source === "manual" ? "Manual" : "Sesi",
-    r.voice_memo_url ?? "",
-    r.notes ?? "",
+function joinUnique(values: (string | null | undefined)[]): string {
+  return [...new Set(values.filter((v): v is string => Boolean(v)))].join("; ");
+}
+
+function toRows(groups: PersonGroup[]) {
+  return groups.map((g) => [
+    g.full_name,
+    g.nickname ?? "",
+    g.nim,
+    g.track === "IUP" ? "IUP" : "Reguler",
+    g.line_id ?? "",
+    g.status === "done" ? "Selesai" : "Terjadwal",
+    g.meetings.length,
+    g.meetings.map((m) => formatDateTimeWib(m.happened_at)).join("; "),
+    joinUnique(g.meetings.map((m) => (m.source === "manual" ? "Manual" : "Sesi"))),
+    joinUnique(g.meetings.map((m) => m.voice_memo_url)),
+    joinUnique(g.meetings.map((m) => m.notes)),
   ]);
 }
 
@@ -50,14 +57,15 @@ function SourceBadge({ source }: { source: InterviewRecord["source"] }) {
   );
 }
 
-function WhenCell({ record }: { record: InterviewRecord }) {
-  const when = formatDateTimeWib(record.happened_at);
-  return record.source === "session" ? (
-    <Link href={`/sessions/${record.record_id}`} className="text-brand-700 underline underline-offset-2">
-      {when}
-    </Link>
-  ) : (
-    <span>{when}</span>
+function RepeatBadge({ count }: { count: number }) {
+  if (count < 2) return null;
+  return (
+    <span
+      className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900"
+      title="Bertemu lebih dari sekali. Tetap dihitung 1 orang di progress."
+    >
+      Ikut wawancara {count}x
+    </span>
   );
 }
 
@@ -67,8 +75,11 @@ export function PartnerTable({ records }: { records: InterviewRecord[] }) {
   const [filter, setFilter] = useState<"" | "IUP" | "REGULER">("");
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<ActionState | null>(null);
-  const shown = filter ? records.filter((r) => r.track === filter) : records;
-  const iup = records.filter((r) => r.track === "IUP").length;
+
+  const groups = groupByPerson(records);
+  const shown = filter ? groups.filter((g) => g.track === filter) : groups;
+  const iup = groups.filter((g) => g.track === "IUP").length;
+  const repeated = groups.filter((g) => g.meetings.length > 1).length;
 
   async function copy() {
     try {
@@ -112,17 +123,40 @@ export function PartnerTable({ records }: { records: InterviewRecord[] }) {
     );
   }
 
-  const deleteButton = (r: InterviewRecord) =>
-    r.source === "manual" ? (
-      <button
-        type="button"
-        disabled={pending}
-        onClick={() => remove(r)}
-        className="min-h-10 rounded-lg px-2 text-xs font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
-      >
-        Hapus
-      </button>
-    ) : null;
+  /** Daftar pertemuan dengan satu orang (waktu, status, sumber, voice memo, hapus). */
+  const meetingList = (g: PersonGroup) => (
+    <ul className="space-y-1.5">
+      {g.meetings.map((m) => (
+        <li key={`${m.source}-${m.record_id}`} className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+          {m.source === "session" ? (
+            <Link href={`/sessions/${m.record_id}`} className="text-brand-700 underline underline-offset-2">
+              {formatDateTimeWib(m.happened_at)}
+            </Link>
+          ) : (
+            <span>{formatDateTimeWib(m.happened_at)}</span>
+          )}
+          <StatusBadge status={m.status} />
+          <SourceBadge source={m.source} />
+          {m.voice_memo_url ? (
+            <a href={m.voice_memo_url} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2">
+              Voice memo
+            </a>
+          ) : null}
+          {m.source === "manual" ? (
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => remove(m)}
+              className="min-h-9 rounded-lg px-2 font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
+            >
+              Hapus
+            </button>
+          ) : null}
+          {m.notes ? <span className="basis-full text-slate-500">{m.notes}</span> : null}
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <div className="space-y-4">
@@ -140,49 +174,44 @@ export function PartnerTable({ records }: { records: InterviewRecord[] }) {
             onChange={(e) => setFilter(e.target.value as typeof filter)}
             className="min-h-11 rounded-xl border border-slate-300 bg-white px-3"
           >
-            <option value="">Semua ({records.length})</option>
+            <option value="">Semua ({groups.length})</option>
             <option value="IUP">IUP ({iup})</option>
-            <option value="REGULER">Reguler ({records.length - iup})</option>
+            <option value="REGULER">Reguler ({groups.length - iup})</option>
           </select>
         </label>
       </div>
       <p className="text-xs text-slate-500">
-        “Salin tabel” menyalin format tab-separated, tinggal tempel ke Google Sheets atau Excel.
+        Satu orang tampil satu kali walaupun bertemu lebih dari sekali, sama seperti hitungan progress.
+        {repeated > 0 ? ` ${repeated} orang ditemui lebih dari sekali.` : ""} “Salin tabel” menyalin format
+        tab-separated, tinggal tempel ke Google Sheets atau Excel.
       </p>
       {result?.message ? <Alert tone={result.ok ? "success" : "error"}>{result.message}</Alert> : null}
 
       {/* Mobile: kartu */}
       <ul className="space-y-2 md:hidden">
-        {shown.map((r) => (
-          <li key={`${r.source}-${r.record_id}-${r.nim}`} className="rounded-xl border border-slate-200 bg-white p-3 text-sm">
+        {shown.map((g) => (
+          <li key={g.nim} className="rounded-xl border border-slate-200 bg-white p-3 text-sm">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <p className="font-semibold text-slate-900">{r.nickname ?? r.full_name}</p>
-                {r.nickname ? <p className="text-slate-700">{r.full_name}</p> : null}
+                <p className="font-semibold text-slate-900">{g.nickname ?? g.full_name}</p>
+                {g.nickname ? <p className="text-slate-700">{g.full_name}</p> : null}
               </div>
-              <TrackBadge track={r.track} />
+              <TrackBadge track={g.track} />
             </div>
             <p className="mt-1 text-slate-600">
-              NIM {r.nim}
-              {r.line_id ? (
+              NIM {g.nim}
+              {g.line_id ? (
                 <>
                   {" "}
-                  · LINE <span className="font-medium text-slate-800">{r.line_id}</span>
+                  · LINE <span className="font-medium text-slate-800">{g.line_id}</span>
                 </>
               ) : null}
             </p>
-            {r.notes ? <p className="mt-1 text-xs text-slate-600">{r.notes}</p> : null}
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-600">
-              <WhenCell record={r} />
-              <StatusBadge status={r.status} />
-              <SourceBadge source={r.source} />
-              {r.voice_memo_url ? (
-                <a href={r.voice_memo_url} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2">
-                  Voice memo
-                </a>
-              ) : null}
-              <span className="ml-auto">{deleteButton(r)}</span>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <StatusBadge status={g.status} />
+              <RepeatBadge count={g.meetings.length} />
             </div>
+            <div className="mt-2 border-t border-slate-100 pt-2">{meetingList(g)}</div>
           </li>
         ))}
       </ul>
@@ -196,36 +225,27 @@ export function PartnerTable({ records }: { records: InterviewRecord[] }) {
               <th scope="col" className="px-3 py-2 font-semibold">NIM</th>
               <th scope="col" className="px-3 py-2 font-semibold">Jalur</th>
               <th scope="col" className="px-3 py-2 font-semibold">ID LINE</th>
-              <th scope="col" className="px-3 py-2 font-semibold">Waktu</th>
               <th scope="col" className="px-3 py-2 font-semibold">Status</th>
-              <th scope="col" className="px-3 py-2 font-semibold">Sumber</th>
-              <th scope="col" className="px-3 py-2 font-semibold">Voice memo</th>
-              <th scope="col" className="px-3 py-2"><span className="sr-only">Aksi</span></th>
+              <th scope="col" className="px-3 py-2 font-semibold">Pertemuan</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {shown.map((r) => (
-              <tr key={`${r.source}-${r.record_id}-${r.nim}`}>
+          <tbody className="divide-y divide-slate-100 align-top">
+            {shown.map((g) => (
+              <tr key={g.nim}>
                 <td className="px-3 py-2">
-                  <p className="text-slate-900">{r.full_name}</p>
-                  {r.nickname ? <p className="text-xs text-slate-500">{r.nickname}</p> : null}
+                  <p className="text-slate-900">{g.full_name}</p>
+                  {g.nickname ? <p className="text-xs text-slate-500">{g.nickname}</p> : null}
                 </td>
-                <td className="px-3 py-2 tabular-nums">{r.nim}</td>
-                <td className="px-3 py-2"><TrackBadge track={r.track} /></td>
-                <td className="px-3 py-2">{r.line_id ?? <span className="text-slate-400">-</span>}</td>
-                <td className="whitespace-nowrap px-3 py-2"><WhenCell record={r} /></td>
-                <td className="px-3 py-2"><StatusBadge status={r.status} /></td>
-                <td className="px-3 py-2"><SourceBadge source={r.source} /></td>
+                <td className="px-3 py-2 tabular-nums">{g.nim}</td>
+                <td className="px-3 py-2"><TrackBadge track={g.track} /></td>
+                <td className="px-3 py-2">{g.line_id ?? <span className="text-slate-400">-</span>}</td>
                 <td className="px-3 py-2">
-                  {r.voice_memo_url ? (
-                    <a href={r.voice_memo_url} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline underline-offset-2">
-                      Buka
-                    </a>
-                  ) : (
-                    <span className="text-slate-400">-</span>
-                  )}
+                  <div className="flex flex-col items-start gap-1">
+                    <StatusBadge status={g.status} />
+                    <RepeatBadge count={g.meetings.length} />
+                  </div>
                 </td>
-                <td className="px-3 py-2 text-right">{deleteButton(r)}</td>
+                <td className="px-3 py-2">{meetingList(g)}</td>
               </tr>
             ))}
           </tbody>

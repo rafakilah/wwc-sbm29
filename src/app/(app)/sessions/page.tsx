@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Cari sesi" };
 
 export default async function SessionsPage() {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("list_open_sessions");
+  const { data, error } = await supabase.rpc("list_open_sessions_v2");
   const sessions = (data ?? []) as OpenSessionRow[];
 
   return (

@@ -234,30 +234,35 @@ describe("dengan deadline jauh", () => {
       expect((await db.rpc(a, "join_session", [s2])).ok).toBe(true);
     });
 
-    it("menolak duplikat partner (siapa pun di sesi itu yang sudah pernah jadi partner)", async () => {
+    it("boleh bertemu partner yang sama lagi, tapi progres tetap dihitung unik per orang", async () => {
       const h1 = await db.createUser(nims.reg());
-      const h2 = await db.createUser(nims.reg());
       const a = await db.createUser(nims.iup());
       const b = await db.createUser(nims.iup());
       const s1 = await db.createSession(h1, { startsAt: hoursFromNow(800) });
-      const s2 = await db.createSession(h2, { startsAt: hoursFromNow(805) });
       expect((await db.rpc(a, "join_session", [s1])).ok).toBe(true);
       expect((await db.rpc(b, "join_session", [s1])).ok).toBe(true);
-      // b gabung s2 duluan, lalu a mencoba gabung s2: a dan b sudah partner di s1.
-      expect((await db.rpc(b, "leave_session", [s1])).ok).toBe(true);
-      expect((await db.rpc(b, "join_session", [s2])).ok).toBe(true);
-      expect((await db.rpc(a, "join_session", [s2])).ok).toBe(true); // a-b tidak lagi partner
-      const h3 = await db.createUser(nims.reg());
-      const s3 = await db.createSession(h3, { startsAt: hoursFromNow(810) });
-      expect((await db.rpc(h1, "join_session", [s3])).ok).toBe(true);
-      // a sudah partner dengan h1 (s1), jadi tidak boleh ke s3.
-      expect((await db.rpc(a, "join_session", [s3])).code).toBe("DUPLICATE_PARTNER");
-      // Host juga dihitung: a sudah partner dengan h2 (s2).
-      const s4 = await db.createSession(h2, { startsAt: hoursFromNow(820) });
-      expect((await db.rpc(a, "join_session", [s4])).code).toBe("DUPLICATE_PARTNER");
+      expect(await db.progress(a)).toEqual({ iup_scheduled: 1, iup_done: 0, reguler_scheduled: 1, reguler_done: 0 });
+
+      // a dan h1 bertemu lagi di sesi lain (h1 host): sekarang diizinkan.
+      const s2 = await db.createSession(h1, { startsAt: hoursFromNow(805) });
+      const before = await db.asUser<{ id: string; blocker: string | null; repeat_count: number }>(
+        a,
+        "select id, blocker, repeat_count from public.list_open_sessions_v2() where id = $1",
+        [s2],
+      );
+      expect(before[0]).toMatchObject({ blocker: null, repeat_count: 1 });
+      expect((await db.rpc(a, "join_session", [s2])).ok).toBe(true);
+
+      // h1 tetap dihitung satu kali di progres a, dan a satu kali di progres h1.
+      expect(await db.progress(a)).toEqual({ iup_scheduled: 1, iup_done: 0, reguler_scheduled: 1, reguler_done: 0 });
+      expect(await db.progress(h1)).toEqual({ iup_scheduled: 2, iup_done: 0, reguler_scheduled: 0, reguler_done: 0 });
+
+      // Di detail sesi s2, a melihat 1 anggota yang sudah pernah wawancara dengannya.
+      const [{ n }] = await db.asUser<{ n: number }>(a, "select public.my_repeat_partner_count($1) as n", [s2]);
+      expect(n).toBe(1);
     });
 
-    it("partner dari sesi selesai juga dihitung duplikat", async () => {
+    it("pertemuan ulang setelah sesi selesai: dihitung Selesai, tidak dobel", async () => {
       const h = await db.createUser(nims.reg());
       const a = await db.createUser(nims.iup());
       const s1 = await db.createSession(h, { startsAt: hoursFromNow(900) });
@@ -265,7 +270,10 @@ describe("dengan deadline jauh", () => {
       await db.moveSessionToPast(s1);
       expect((await db.rpc(h, "complete_session", [s1, "https://example.com/memo"])).ok).toBe(true);
       const s2 = await db.createSession(h, { startsAt: hoursFromNow(905) });
-      expect((await db.rpc(a, "join_session", [s2])).code).toBe("DUPLICATE_PARTNER");
+      expect((await db.rpc(a, "join_session", [s2])).ok).toBe(true);
+      expect(await db.progress(a)).toEqual({ iup_scheduled: 0, iup_done: 0, reguler_scheduled: 0, reguler_done: 1 });
+      const records = await db.asUser<{ nim: string }>(a, "select nim from public.my_interview_records()");
+      expect(records).toHaveLength(2); // dua pertemuan, satu orang
     });
 
     it("menolak jika sesi sudah dimulai, dibatalkan, atau selesai", async () => {

@@ -20,9 +20,9 @@ describe("konkurensi join_session", () => {
     expect(codes).toEqual({ OK: 9, SESSION_FULL: 21 });
   });
 
-  it("duplikat partner lintas sesi tidak lolos saat bersamaan", async () => {
-    for (let i = 0; i < 5; i++) {
-      expect(await runCrossSessionDuplicateRace(db)).toEqual(["DUPLICATE_PARTNER", "OK"]);
+  it("bertemu partner yang sama lintas sesi bersamaan: keduanya boleh, progres tetap unik", async () => {
+    for (let i = 0; i < 3; i++) {
+      expect(await runCrossSessionDuplicateRace(db)).toEqual(["OK", "OK"]);
     }
   });
 });

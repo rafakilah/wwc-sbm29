@@ -46,7 +46,7 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
   const viewer = await requireViewer();
   const supabase = await createClient();
 
-  const [{ data: session }, { data: memberRows }, { data: blocker }] = await Promise.all([
+  const [{ data: session }, { data: memberRows }, { data: blocker }, { data: repeatCount }] = await Promise.all([
     supabase
       .from("sessions")
       .select("id, host_id, starts_at, ends_at, duration_minutes, mode, location, capacity, track_pref, notes, status, voice_memo_url")
@@ -59,6 +59,7 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
       .order("joined_at")
       .returns<MemberRecord[]>(),
     supabase.rpc("my_join_blocker", { p_session_id: id }),
+    supabase.rpc("my_repeat_partner_count", { p_session_id: id }),
   ]);
   if (!session) notFound();
 
@@ -87,6 +88,13 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
 
       {query.dibuat ? <Alert tone="success">Sesi berhasil dibuat. Bagikan link halaman ini ke teman-temanmu!</Alert> : null}
       {query.gabung && isMember ? <Alert tone="success">Kamu berhasil bergabung. Sampai ketemu di sesi!</Alert> : null}
+
+      {typeof repeatCount === "number" && repeatCount > 0 && session.status !== "cancelled" ? (
+        <Alert tone="info">
+          {repeatCount} orang di sesi ini sudah pernah wawancara denganmu (lewat sesi lain atau catatan manual). Tetap
+          boleh, tapi mereka tidak dihitung dua kali di progress.
+        </Alert>
+      ) : null}
 
       <Card className="space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
