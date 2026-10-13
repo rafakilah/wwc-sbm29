@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Linkify } from "@/components/linkify";
 import { SessionActionButton } from "@/components/session-action-button";
 import { Alert, Card, StatusBadge, TRACK_PREF_LABEL, TrackBadge } from "@/components/ui";
 import { requireViewer } from "@/lib/auth";
@@ -140,7 +141,9 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
           {session.notes ? (
             <div className="sm:col-span-2">
               <dt className="text-slate-500">Catatan</dt>
-              <dd className="whitespace-pre-line text-slate-900">{session.notes}</dd>
+              <dd className="whitespace-pre-line break-words text-slate-900">
+                <Linkify text={session.notes} />
+              </dd>
             </div>
           ) : null}
           {session.status === "done" ? (
