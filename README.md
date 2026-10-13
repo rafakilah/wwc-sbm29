@@ -260,7 +260,7 @@ CI GitHub Actions (`.github/workflows/ci.yml`) menjalankan semuanya, termasuk te
 - **Sesi aktif** = status `open` atau `done`. Sesi `open` yang waktunya sudah lewat tapi belum ditandai selesai tetap dihitung "Terjadwal".
 - **Host boleh membatalkan** selama sesi masih `open`, termasuk setelah waktu mulai (mis. sesi tidak jadi). Setelah `done`, tidak bisa dibatalkan.
 - **Tandai selesai** butuh minimal 2 anggota (`NO_PARTNERS`); sesi tanpa anggota lain sebaiknya dibatalkan.
-- **Duplikat partner**: user tidak bisa gabung ke sesi yang berisi siapa pun yang sudah jadi partnernya di sesi aktif lain (termasuk host). Karena pembuatan sesi hanya berisi host sendiri, pembuatan tidak perlu cek duplikat.
+- **Bertemu partner yang sama lagi diizinkan** (sejak migration `allow_repeat_partners`). Progres tetap dihitung unik per NIM partner, jadi orang yang sama tidak terhitung dua kali. Daftar/detail sesi menampilkan berapa anggota yang sudah pernah wawancara denganmu, dan halaman Progress menggabungkan pertemuan per orang dengan label "Ikut wawancara Nx".
 - **Progres total z/50** dihitung maksimal 25 per jalur, karena kelebihan di satu jalur tidak menutup kekurangan jalur lain. Angka per jalur tetap ditampilkan apa adanya (bisa lebih dari 25).
 - **Preferensi jalur** sesi hanya informasi, tidak membatasi siapa yang bisa gabung.
 - **Lokasi/link meeting** terlihat oleh semua user yang login (dibutuhkan untuk memutuskan gabung). Data sensitif (nama lengkap, NIM, ID LINE) hanya terlihat oleh pemilik, admin, dan sesama anggota sesi `open`/`done`; di daftar publik hanya nama panggilan dan jalur.

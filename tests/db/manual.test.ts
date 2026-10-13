@@ -67,7 +67,7 @@ describe("wawancara manual", () => {
     expect((await addManual(me, otherNim)).code).toBe("DUPLICATE_RECORD");
   });
 
-  it("mencegah dipertemukan lagi di sesi, dari dua arah", async () => {
+  it("boleh bertemu lagi di sesi; ditandai dari dua arah dan tidak dihitung dobel", async () => {
     const aNim = nims.reg();
     const a = await db.createUser(aNim);
     const bNim = nims.iup();
@@ -77,22 +77,34 @@ describe("wawancara manual", () => {
     // a mencatat b secara manual.
     expect((await addManual(a, bNim)).ok).toBe(true);
 
-    // a tidak bisa gabung sesi berisi b.
+    // a boleh gabung sesi berisi b, dan ditandai sudah pernah.
     const s1 = await db.createSession(b, { startsAt: hoursFromNow(60) });
-    expect((await db.rpc(a, "join_session", [s1])).code).toBe("DUPLICATE_PARTNER");
+    const seenByA = await db.asUser<{ blocker: string | null; repeat_count: number }>(
+      a,
+      "select blocker, repeat_count from public.list_open_sessions_v2() where id = $1",
+      [s1],
+    );
+    expect(seenByA[0]).toEqual({ blocker: null, repeat_count: 1 });
+    expect((await db.rpc(a, "join_session", [s1])).ok).toBe(true);
+    // b tetap 1 kali di progres a (manual selesai menang atas sesi terjadwal).
+    expect(await db.progress(a)).toEqual({ iup_scheduled: 0, iup_done: 1, reguler_scheduled: 0, reguler_done: 0 });
 
-    // b juga tidak bisa gabung sesi berisi a (catatan dari arah sebaliknya).
+    // Dari arah sebaliknya: b melihat a sebagai "sudah pernah" di sesi lain milik a.
     const s2 = await db.createSession(a, { startsAt: hoursFromNow(70) });
-    expect((await db.rpc(b, "join_session", [s2])).code).toBe("DUPLICATE_PARTNER");
-
-    // Orang lain tetap bisa.
-    expect((await db.rpc(c, "join_session", [s2])).ok).toBe(true);
-    const listed = await db.asUser<{ id: string; blocker: string | null }>(
+    const seenByB = await db.asUser<{ repeat_count: number }>(
       b,
-      "select id, blocker from public.list_open_sessions() where id = $1",
+      "select repeat_count from public.list_open_sessions_v2() where id = $1",
       [s2],
     );
-    expect(listed[0].blocker).toBe("DUPLICATE_PARTNER");
+    expect(seenByB[0].repeat_count).toBe(1);
+
+    // Orang baru tidak ditandai.
+    const seenByC = await db.asUser<{ repeat_count: number }>(
+      c,
+      "select repeat_count from public.list_open_sessions_v2() where id = $1",
+      [s2],
+    );
+    expect(seenByC[0].repeat_count).toBe(0);
   });
 
   it("menghapus catatan memperbarui progres; hanya pemilik yang bisa menghapus", async () => {

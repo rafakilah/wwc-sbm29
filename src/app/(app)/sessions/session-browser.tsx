@@ -157,6 +157,13 @@ function SessionListItem({ session: s }: { session: OpenSessionRow }) {
 
       <MemberChips members={s.members} />
 
+      {s.repeat_count > 0 && s.blocker !== "ALREADY_MEMBER" ? (
+        <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">
+          {s.repeat_count} orang di sesi ini sudah pernah wawancara denganmu. Tetap boleh gabung, tapi mereka tidak
+          dihitung dua kali di progress.
+        </p>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-2">
         {s.blocker ? (
           <>
