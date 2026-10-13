@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { Linkify } from "@/components/linkify";
 import { MemberChips } from "@/components/member-chips";
 import { SessionActionButton } from "@/components/session-action-button";
 import { Card, EmptyState, TRACK_PREF_LABEL, cn, inputClass } from "@/components/ui";
@@ -29,7 +30,12 @@ export function SessionBrowser({ sessions }: { sessions: OpenSessionRow[] }) {
     return [...map.entries()];
   }, [sessions]);
 
-  const visible = sessions.filter((s) => {
+  const joinableCount = sessions.filter((s) => !s.blocker).length;
+
+  // Yang masih bisa diikuti tampil duluan; di dalam tiap kelompok tetap urut waktu.
+  const ordered = [...sessions].sort((a, b) => Number(Boolean(a.blocker)) - Number(Boolean(b.blocker)));
+
+  const visible = ordered.filter((s) => {
     const seats = s.capacity - s.member_count;
     if (filters.date && wibDateKey(s.starts_at) !== filters.date) return false;
     if (filters.mode && s.mode !== filters.mode) return false;
@@ -43,6 +49,16 @@ export function SessionBrowser({ sessions }: { sessions: OpenSessionRow[] }) {
 
   return (
     <div className="space-y-4">
+      {joinableCount === 0 ? (
+        <Link
+          href="/sessions/new"
+          className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-brand-100 bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-800 transition hover:border-brand-600"
+        >
+          <span>Tidak ada sesi yang bisa kamu ikuti? Klik untuk buat sesi baru</span>
+          <span aria-hidden="true">→</span>
+        </Link>
+      ) : null}
+
       <Card className="space-y-3">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <label className="space-y-1 text-xs font-medium text-slate-600">
@@ -156,6 +172,13 @@ function SessionListItem({ session: s }: { session: OpenSessionRow }) {
       </div>
 
       <MemberChips members={s.members} />
+
+      {s.notes ? (
+        <p className="line-clamp-3 whitespace-pre-line break-words text-xs text-slate-600">
+          <span className="font-medium text-slate-700">Catatan: </span>
+          <Linkify text={s.notes} />
+        </p>
+      ) : null}
 
       {s.repeat_count > 0 && s.blocker !== "ALREADY_MEMBER" ? (
         <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">

@@ -137,8 +137,20 @@ export function NewSessionForm({ minDate, maxDate }: { minDate: string; maxDate:
             <option value="REGULER">Reguler</option>
           </select>
         </Field>
-        <Field label="Catatan (opsional)" htmlFor="notes" error={fe.notes}>
-          <textarea id="notes" name="notes" rows={3} maxLength={500} placeholder="Mis. kumpul di depan lift, bawa HP buat rekam." className={inputClass} />
+        <Field
+          label="Catatan (opsional)"
+          htmlFor="notes"
+          error={fe.notes}
+          hint="Bisa diisi link grup LINE supaya anggota gampang koordinasi. Link otomatis bisa diklik."
+        >
+          <textarea
+            id="notes"
+            name="notes"
+            rows={3}
+            maxLength={500}
+            placeholder="Mis. Grup LINE: https://line.me/R/ti/g/… · kumpul di depan lift, bawa HP buat rekam."
+            className={inputClass}
+          />
         </Field>
       </Card>
 
