@@ -1,10 +1,3 @@
-/** Spreadsheet yang ditampilkan sebagai kartu di bawah kartu deadline (dashboard). */
-export const SPREADSHEET_LINK = {
-  label: "Spreadsheet Wawancara Angkatan",
-  description: "Buka di Google Sheets",
-  href: "https://docs.google.com/spreadsheets/d/13pbqDvfNaanBEglj4CkInQDrLd2DtFh3/edit?gid=129307807#gid=129307807",
-} as const;
-
 /** Tautan dokumen penting. Ubah label/URL di sini saja. */
 export const IMPORTANT_LINKS = [
   {
