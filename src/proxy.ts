@@ -70,7 +70,10 @@ export async function proxy(request: NextRequest) {
 
   if (!onboarded) {
     if (path === "/onboarding") return response;
-    return redirectTo("/onboarding");
+    // Simpan tujuan awal (mis. link undangan sesi) supaya kembali ke sana setelah onboarding.
+    const params: Record<string, string> = {};
+    if (path !== "/" && path !== "/dashboard") params.next = path + request.nextUrl.search;
+    return redirectTo("/onboarding", params);
   }
 
   if (path === "/" || isLogin || path === "/onboarding") {

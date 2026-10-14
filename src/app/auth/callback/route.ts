@@ -1,13 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { isEmailAllowed } from "@/lib/env";
+import { safeNext } from "@/lib/safe-next";
 import { createClient } from "@/lib/supabase/server";
 
 /** Tujuan akhir OAuth Google: tukar code dengan sesi, lalu lanjut ke aplikasi. */
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const code = searchParams.get("code");
-  const nextParam = searchParams.get("next");
-  const next = nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/dashboard";
+  const next = safeNext(searchParams.get("next")) ?? "/dashboard";
 
   if (!code) {
     return NextResponse.redirect(new URL("/login?error=auth", origin));

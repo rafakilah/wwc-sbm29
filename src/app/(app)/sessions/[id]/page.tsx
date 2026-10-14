@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCalendar } from "@/components/add-to-calendar";
+import { InvitePreviewDialog } from "@/components/invite-preview-dialog";
 import { Linkify } from "@/components/linkify";
 import { SessionActionButton } from "@/components/session-action-button";
+import { ShareSessionButton } from "@/components/share-session-button";
 import { Alert, Card, StatusBadge, TRACK_PREF_LABEL, TrackBadge } from "@/components/ui";
 import { requireViewer } from "@/lib/auth";
 import { errorMessage } from "@/lib/errors";
@@ -88,7 +90,11 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
         ← Kembali ke daftar sesi
       </Link>
 
-      {query.dibuat ? <Alert tone="success">Sesi berhasil dibuat. Bagikan link halaman ini ke teman-temanmu!</Alert> : null}
+      {query.dibuat ? (
+        <Alert tone="success">
+          Sesi berhasil dibuat. Klik <strong>Bagikan link sesi</strong> untuk mengajak teman-temanmu!
+        </Alert>
+      ) : null}
       {query.gabung && isMember ? <Alert tone="success">Kamu berhasil bergabung. Sampai ketemu di sesi!</Alert> : null}
 
       {typeof repeatCount === "number" && repeatCount > 0 && session.status !== "cancelled" ? (
@@ -96,6 +102,28 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
           {repeatCount} orang di sesi ini sudah pernah wawancara denganmu (lewat sesi lain atau catatan manual). Tetap
           boleh, tapi mereka tidak dihitung dua kali di progress.
         </Alert>
+      ) : null}
+
+      {query.undangan ? (
+        <InvitePreviewDialog
+          sessionId={session.id}
+          startsAt={session.starts_at}
+          endsAt={session.ends_at}
+          durationMinutes={session.duration_minutes}
+          hostNickname={hostNickname}
+          mode={session.mode}
+          location={session.location}
+          notes={session.notes}
+          members={members.map((m) => ({
+            nickname: m.profiles_public?.nickname ?? "?",
+            track: m.profiles_public?.track ?? "REGULER",
+            is_host: m.user_id === session.host_id,
+          }))}
+          capacity={session.capacity}
+          repeatCount={typeof repeatCount === "number" ? repeatCount : 0}
+          isMember={isMember}
+          blocker={blockerCode}
+        />
       ) : null}
 
       <Card className="space-y-4">
@@ -164,6 +192,15 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
         </dl>
 
         <div className="space-y-4 border-t border-slate-100 pt-4">
+          {isOpen && !started ? (
+            <ShareSessionButton
+              sessionId={session.id}
+              startsAt={session.starts_at}
+              mode={session.mode}
+              location={session.location}
+              seats={Math.max(seats, 0)}
+            />
+          ) : null}
           {isMember && isOpen && new Date(session.ends_at).getTime() > now ? (
             <AddToCalendar
               id={session.id}

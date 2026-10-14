@@ -6,6 +6,7 @@ import type { ActionState } from "@/lib/action-result";
 import { errorMessage } from "@/lib/errors";
 import { trackFromNim } from "@/lib/nim";
 import { callRpc } from "@/lib/rpc";
+import { safeNext } from "@/lib/safe-next";
 import { createClient } from "@/lib/supabase/server";
 
 function text(formData: FormData, key: string): string {
@@ -58,7 +59,7 @@ export async function completeOnboarding(_prev: ActionState, formData: FormData)
   }
 
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  redirect(safeNext(text(formData, "next")) ?? "/dashboard");
 }
 
 export async function updateProfile(_prev: ActionState, formData: FormData): Promise<ActionState> {
