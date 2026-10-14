@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ImportantLinksList } from "@/components/important-links";
 import { MySessionList } from "@/components/my-session-list";
 import { ProgressCard } from "@/components/progress-card";
+import { StartingSoonBanner } from "@/components/starting-soon-banner";
 import { ButtonLink, Card, EmptyState, TrackBadge } from "@/components/ui";
 import { requireViewer } from "@/lib/auth";
 import { DEADLINE } from "@/lib/constants";
@@ -33,6 +34,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-5">
+      <StartingSoonBanner sessions={upcoming} serverNow={now.getTime()} />
+
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Hai, {viewer.nickname}!</h1>
