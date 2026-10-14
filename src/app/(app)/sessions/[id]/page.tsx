@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AddToCalendar } from "@/components/add-to-calendar";
 import { Linkify } from "@/components/linkify";
 import { SessionActionButton } from "@/components/session-action-button";
 import { Alert, Card, StatusBadge, TRACK_PREF_LABEL, TrackBadge } from "@/components/ui";
@@ -162,7 +163,18 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
           ) : null}
         </dl>
 
-        <div className="border-t border-slate-100 pt-4">
+        <div className="space-y-4 border-t border-slate-100 pt-4">
+          {isMember && isOpen && new Date(session.ends_at).getTime() > now ? (
+            <AddToCalendar
+              id={session.id}
+              startsAt={session.starts_at}
+              endsAt={session.ends_at}
+              mode={session.mode}
+              location={session.location}
+              notes={session.notes}
+              hostNickname={hostNickname}
+            />
+          ) : null}
           <SessionActions
             sessionId={session.id}
             isOpen={isOpen}
