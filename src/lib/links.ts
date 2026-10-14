@@ -23,3 +23,9 @@ export const IMPORTANT_LINKS = [
     href: "https://www.canva.com/design/DAHXn7zkx8M/Ss47w4Q_rru2hF8711f8Ig/edit",
   },
 ] as const;
+
+/** Kontak admin untuk kendala atau pertanyaan (WhatsApp). */
+export const ADMIN_CONTACT = {
+  display: "0822-9599-9822",
+  href: "https://wa.me/6282295999822",
+} as const;

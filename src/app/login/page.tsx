@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Alert } from "@/components/ui";
 import { DEADLINE } from "@/lib/constants";
+import { ADMIN_CONTACT } from "@/lib/links";
 import { safeNext } from "@/lib/safe-next";
 import { formatDateTimeWib } from "@/lib/time";
 import { GoogleButton } from "./google-button";
@@ -38,6 +39,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         <a href="/privasi" className="underline underline-offset-2">
           Kebijakan privasi
         </a>
+        <br />
+        Kendala login? Hubungi admin{" "}
+        <a href={ADMIN_CONTACT.href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">
+          {ADMIN_CONTACT.display}
+        </a>{" "}
+        (WhatsApp)
       </p>
     </main>
   );

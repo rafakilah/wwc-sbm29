@@ -4,6 +4,7 @@ import { CreateSessionFab } from "@/components/fab";
 import { FooterLinks } from "@/components/important-links";
 import { RefreshOnFocus } from "@/components/refresh-on-focus";
 import { requireViewer } from "@/lib/auth";
+import { ADMIN_CONTACT } from "@/lib/links";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const viewer = await requireViewer();
@@ -36,6 +37,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="mx-auto w-full max-w-4xl space-y-2 px-4 pt-5 text-sm text-slate-600">
           <p className="font-semibold text-slate-800">Dokumen penting</p>
           <FooterLinks />
+          <p className="pt-2 font-semibold text-slate-800">Butuh bantuan?</p>
+          <p>
+            Ada kendala atau mau hubungi admin? Chat WhatsApp{" "}
+            <a
+              href={ADMIN_CONTACT.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-brand-700 underline underline-offset-2"
+            >
+              {ADMIN_CONTACT.display}
+            </a>
+          </p>
           <p className="text-xs text-slate-500">
             Web ini hanya membantu penjadwalan. Rekaman voice memo tetap dimasukkan ke logbook Canva.
           </p>
