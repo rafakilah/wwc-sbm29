@@ -143,7 +143,7 @@ export class TestDb {
   /** Buat sesi via RPC sebagai host. Default: besok jam 10.00 WIB + offset menit. */
   async createSession(
     hostId: string,
-    opts: { startsAt?: Date; duration?: number; capacity?: number; mode?: string } = {},
+    opts: { startsAt?: Date; duration?: number; capacity?: number; mode?: string; trackPref?: string } = {},
   ): Promise<string> {
     const startsAt = opts.startsAt ?? hoursFromNow(24);
     const res = await this.rpc(hostId, "create_session", [
@@ -152,7 +152,7 @@ export class TestDb {
       opts.mode ?? "offline",
       "Selasar SBM",
       opts.capacity ?? 10,
-      "BEBAS",
+      opts.trackPref ?? "BEBAS",
       null,
     ]);
     if (!res.ok) throw new Error(`create_session gagal: ${res.code}`);

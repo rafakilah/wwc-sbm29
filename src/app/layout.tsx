@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     template: "%s · Wawancara Angkatan SBM 2026",
   },
   description:
-    "Jadwalkan sesi wawancara angkatan, hindari wawancara dobel, dan pantau progres 25 IUP + 25 Reguler.",
+    "Atur sesi wawancara dan pantau progres 25 IUP + 25 Reguler.",
 };
 
 export const viewport: Viewport = {

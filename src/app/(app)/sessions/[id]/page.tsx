@@ -158,7 +158,7 @@ export default async function SessionDetailPage({ params, searchParams }: PagePr
             </dd>
           </div>
           <div>
-            <dt className="text-slate-500">Preferensi jalur</dt>
+            <dt className="text-slate-500">Jalur</dt>
             <dd className="font-medium text-slate-900">{TRACK_PREF_LABEL[session.track_pref]}</dd>
           </div>
           <div>

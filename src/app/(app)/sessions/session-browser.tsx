@@ -91,12 +91,12 @@ export function SessionBrowser({ sessions }: { sessions: OpenSessionRow[] }) {
             </select>
           </label>
           <label className="space-y-1 text-xs font-medium text-slate-600">
-            Preferensi jalur
+            Jalur sesi
             <select className={inputClass} value={filters.trackPref} onChange={(e) => set("trackPref", e.target.value as Filters["trackPref"])}>
               <option value="">Semua</option>
-              <option value="BEBAS">Bebas</option>
-              <option value="IUP">IUP</option>
-              <option value="REGULER">Reguler</option>
+              <option value="BEBAS">Semua jalur</option>
+              <option value="IUP">Khusus IUP</option>
+              <option value="REGULER">Khusus Reguler</option>
             </select>
           </label>
         </div>

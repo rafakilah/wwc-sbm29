@@ -23,7 +23,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         <p className="text-sm font-semibold uppercase tracking-wide text-brand-600">OS SBM ITB 2026 · Angkatan 29</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Penjadwal Wawancara Angkatan</h1>
         <p className="mt-3 text-slate-600">
-          Atur sesi wawancara, hindari ketemu orang yang sama dua kali, dan pantau progres 25 IUP + 25 Reguler.
+          Atur sesi wawancara dan pantau progres 25 IUP + 25 Reguler.
         </p>
       </div>
       <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -34,7 +34,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         </p>
       </div>
       <p className="mt-6 text-center text-xs text-slate-500">
-        Web ini hanya membantu penjadwalan. Logbook tetap diisi di Canva.{" "}
+        Web ini hanya membantu penjadwalan.{" "}
         <a href="/privasi" className="underline underline-offset-2">
           Kebijakan privasi
         </a>

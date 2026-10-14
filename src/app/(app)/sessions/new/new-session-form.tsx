@@ -130,11 +130,11 @@ export function NewSessionForm({ minDate, maxDate }: { minDate: string; maxDate:
             ))}
           </select>
         </Field>
-        <Field label="Preferensi jalur" htmlFor="track_pref" hint="Hanya informasi untuk calon anggota, tidak membatasi siapa yang bisa gabung.">
+        <Field label="Jalur yang boleh gabung" htmlFor="track_pref" hint="Orang dari jalur lain tidak bisa gabung ke sesi ini.">
           <select id="track_pref" name="track_pref" defaultValue="BEBAS" className={inputClass}>
-            <option value="BEBAS">Bebas</option>
-            <option value="IUP">IUP</option>
-            <option value="REGULER">Reguler</option>
+            <option value="BEBAS">Semua jalur</option>
+            <option value="IUP">Khusus IUP</option>
+            <option value="REGULER">Khusus Reguler</option>
           </select>
         </Field>
         <Field

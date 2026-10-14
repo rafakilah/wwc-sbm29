@@ -94,9 +94,9 @@ export function StatusBadge({ status }: { status: string }) {
 }
 
 export const TRACK_PREF_LABEL: Record<string, string> = {
-  BEBAS: "Jalur bebas",
-  IUP: "Cari IUP",
-  REGULER: "Cari Reguler",
+  BEBAS: "Semua jalur",
+  IUP: "Khusus IUP",
+  REGULER: "Khusus Reguler",
 };
 
 export function Alert({

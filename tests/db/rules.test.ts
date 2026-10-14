@@ -187,6 +187,30 @@ describe("dengan deadline jauh", () => {
   });
 
   describe("join_session", () => {
+    it("sesi khusus jalur hanya bisa diikuti jalur itu", async () => {
+      const h = await db.createUser(nims.reg());
+      const sid = await db.createSession(h, { trackPref: "IUP", startsAt: hoursFromNow(610) });
+      const reg = await db.createUser(nims.reg());
+      const iup = await db.createUser(nims.iup());
+      const listed = await db.asUser<{ blocker: string | null }>(
+        reg,
+        "select blocker from public.list_open_sessions_v2() where id = $1",
+        [sid],
+      );
+      expect(listed[0].blocker).toBe("TRACK_NOT_ALLOWED");
+      expect((await db.rpc(reg, "join_session", [sid])).code).toBe("TRACK_NOT_ALLOWED");
+      expect((await db.rpc(iup, "join_session", [sid])).ok).toBe(true);
+      expect(await db.memberCount(sid)).toBe(2);
+
+      const reguler = await db.createSession(h, { trackPref: "REGULER", startsAt: hoursFromNow(620) });
+      expect((await db.rpc(iup, "join_session", [reguler])).code).toBe("TRACK_NOT_ALLOWED");
+      expect((await db.rpc(reg, "join_session", [reguler])).ok).toBe(true);
+
+      const bebas = await db.createSession(h, { startsAt: hoursFromNow(630) });
+      expect((await db.rpc(iup, "join_session", [bebas])).ok).toBe(true);
+      expect((await db.rpc(reg, "join_session", [bebas])).ok).toBe(true);
+    });
+
     it("menolak jika sesi penuh (kapasitas termasuk host)", async () => {
       const h = await db.createUser(nims.reg());
       const sid = await db.createSession(h, { capacity: 3, startsAt: hoursFromNow(600) });
