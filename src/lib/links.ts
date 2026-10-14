@@ -26,6 +26,6 @@ export const IMPORTANT_LINKS = [
 
 /** Kontak admin untuk kendala atau pertanyaan (WhatsApp). */
 export const ADMIN_CONTACT = {
-  display: "0822-9599-9822",
-  href: "https://wa.me/6282295999822",
+  display: "0851-1056-6429",
+  href: "https://wa.me/6285110566429",
 } as const;
