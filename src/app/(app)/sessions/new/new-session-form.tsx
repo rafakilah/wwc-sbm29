@@ -141,14 +141,14 @@ export function NewSessionForm({ minDate, maxDate }: { minDate: string; maxDate:
           label="Catatan (opsional)"
           htmlFor="notes"
           error={fe.notes}
-          hint="Bisa diisi link grup LINE supaya anggota gampang koordinasi. Link otomatis bisa diklik."
+          hint="Isi dengan link grup LINE dan/atau link docs. Link otomatis bisa diklik."
         >
           <textarea
             id="notes"
             name="notes"
             rows={3}
             maxLength={500}
-            placeholder="Mis. Grup LINE: https://line.me/R/ti/g/… · kumpul di depan lift, bawa HP buat rekam."
+            placeholder="Mis. Grup LINE: https://line.me/R/ti/g/… dan/atau link docs: https://docs.google.com/…"
             className={inputClass}
           />
         </Field>
