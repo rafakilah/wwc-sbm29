@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Alert } from "@/components/ui";
 import { DEADLINE } from "@/lib/constants";
+import { safeNext } from "@/lib/safe-next";
 import { formatDateTimeWib } from "@/lib/time";
 import { GoogleButton } from "./google-button";
 
@@ -10,11 +11,6 @@ const ERRORS: Record<string, string> = {
   domain: "Akun ini tidak diizinkan masuk. Pakai akun email yang ditentukan panitia, ya.",
   auth: "Login gagal atau dibatalkan. Coba lagi, ya.",
 };
-
-function safeNext(value: string | string[] | undefined): string | undefined {
-  const v = Array.isArray(value) ? value[0] : value;
-  return v && v.startsWith("/") && !v.startsWith("//") ? v : undefined;
-}
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const params = await searchParams;

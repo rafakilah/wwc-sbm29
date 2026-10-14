@@ -5,13 +5,14 @@ import { NimInput } from "@/components/nim-input";
 import { Alert, Button, Field, inputClass } from "@/components/ui";
 import { useFormAction } from "@/lib/use-form-action";
 
-export function OnboardingForm({ defaultFullName }: { defaultFullName: string }) {
+export function OnboardingForm({ defaultFullName, next }: { defaultFullName: string; next?: string }) {
   const { state, pending, onSubmit } = useFormAction(completeOnboarding);
   const fe = state.fieldErrors ?? {};
 
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
       {state.message && !state.ok ? <Alert>{state.message}</Alert> : null}
+      {next ? <input type="hidden" name="next" value={next} /> : null}
       <Field label="Nama lengkap" htmlFor="full_name" error={fe.full_name}>
         <input id="full_name" name="full_name" required maxLength={100} autoComplete="name" defaultValue={defaultFullName} className={inputClass} />
       </Field>
