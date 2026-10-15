@@ -22,3 +22,8 @@ export const ADMIN_CONTACT = {
   display: "0851-1056-6429",
   href: "https://wa.me/6285110566429",
 } as const;
+
+/** Link WhatsApp ke nomor admin dengan pesan yang sudah terisi. */
+export function adminWaUrl(text: string): string {
+  return `${ADMIN_CONTACT.href}?text=${encodeURIComponent(text)}`;
+}

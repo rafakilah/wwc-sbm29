@@ -6,6 +6,7 @@ import { StartingSoonBanner } from "@/components/starting-soon-banner";
 import { ButtonLink, Card, EmptyState, TrackBadge } from "@/components/ui";
 import { requireViewer } from "@/lib/auth";
 import { DEADLINE } from "@/lib/constants";
+import { adminWaUrl } from "@/lib/links";
 import { createClient } from "@/lib/supabase/server";
 import { formatCountdown, formatDateTimeWib } from "@/lib/time";
 import type { MySessionRow, Progress } from "@/lib/types";
@@ -50,6 +51,26 @@ export default async function DashboardPage() {
         </p>
         <p className="text-sm font-semibold text-amber-900">{formatCountdown(DEADLINE, now)}</p>
       </Card>
+
+      <a
+        href={adminWaUrl(
+          `Halo kak, saya ${viewer.fullName} (${viewer.nim}, ${viewer.track === "IUP" ? "IUP" : "Reguler"}) mau pakai jasa input canva jurnal wawancara. Boleh info detailnya?`,
+        )}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex min-h-14 items-center justify-between gap-3 rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 shadow-sm transition hover:border-violet-400"
+      >
+        <span className="min-w-0">
+          <span className="block text-sm font-semibold text-violet-900">Jasa input canva jurnal wawancara</span>
+          <span className="block text-xs text-violet-800">
+            Chat penyedia jasa untuk info &amp; harga (layanan pihak eksternal, bukan dari web ini)
+          </span>
+        </span>
+        <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 shrink-0 text-violet-700" fill="none" stroke="currentColor" strokeWidth={2}>
+          <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+        </svg>
+        <span className="sr-only">(buka WhatsApp di tab baru)</span>
+      </a>
 
       <ProgressCard progress={progress} />
 
