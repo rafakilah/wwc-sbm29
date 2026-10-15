@@ -6,7 +6,7 @@ import { StartingSoonBanner } from "@/components/starting-soon-banner";
 import { ButtonLink, Card, EmptyState, TrackBadge } from "@/components/ui";
 import { requireViewer } from "@/lib/auth";
 import { DEADLINE } from "@/lib/constants";
-import { adminWaUrl } from "@/lib/links";
+import { serviceWaUrl } from "@/lib/links";
 import { createClient } from "@/lib/supabase/server";
 import { formatCountdown, formatDateTimeWib } from "@/lib/time";
 import type { MySessionRow, Progress } from "@/lib/types";
@@ -53,7 +53,7 @@ export default async function DashboardPage() {
       </Card>
 
       <a
-        href={adminWaUrl(
+        href={serviceWaUrl(
           `Halo kak, saya ${viewer.fullName} (${viewer.nim}, ${viewer.track === "IUP" ? "IUP" : "Reguler"}) mau pakai jasa input canva jurnal wawancara. Boleh info detailnya?`,
         )}
         target="_blank"

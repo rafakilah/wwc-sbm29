@@ -19,11 +19,16 @@ export const IMPORTANT_LINKS = [
 
 /** Kontak admin untuk kendala atau pertanyaan (WhatsApp). */
 export const ADMIN_CONTACT = {
-  display: "0851-1056-6429",
+  display: "0822-9599-9822",
+  href: "https://wa.me/6282295999822",
+} as const;
+
+/** Kontak penyedia jasa input canva (pihak eksternal, WhatsApp). */
+export const SERVICE_CONTACT = {
   href: "https://wa.me/6285110566429",
 } as const;
 
-/** Link WhatsApp ke nomor admin dengan pesan yang sudah terisi. */
-export function adminWaUrl(text: string): string {
-  return `${ADMIN_CONTACT.href}?text=${encodeURIComponent(text)}`;
+/** Link WhatsApp ke penyedia jasa dengan pesan yang sudah terisi. */
+export function serviceWaUrl(text: string): string {
+  return `${SERVICE_CONTACT.href}?text=${encodeURIComponent(text)}`;
 }
