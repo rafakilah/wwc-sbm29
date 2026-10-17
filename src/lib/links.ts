@@ -22,13 +22,3 @@ export const ADMIN_CONTACT = {
   display: "0822-9599-9822",
   href: "https://wa.me/6282295999822",
 } as const;
-
-/** Kontak penyedia jasa input canva (pihak eksternal, WhatsApp). */
-export const SERVICE_CONTACT = {
-  href: "https://wa.me/6285110566429",
-} as const;
-
-/** Link WhatsApp ke penyedia jasa dengan pesan yang sudah terisi. */
-export function serviceWaUrl(text: string): string {
-  return `${SERVICE_CONTACT.href}?text=${encodeURIComponent(text)}`;
-}
